@@ -1,6 +1,6 @@
 package rsync
 
-const WRAPPER_CONFIG = "rsync-wrapper.yaml"
+const WRAPPER_CONFIG = ".rsync-wrapper.yaml"
 
 type RsyncWrapper struct {
 	ExcludeDirs            []string `yaml:"excludeDirs,omitempty"`

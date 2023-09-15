@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"sync"
 
 	"gopkg.in/yaml.v2"
@@ -32,17 +33,21 @@ func Wrapper(ctx context.Context, path string) error {
 
 func generateCommand(sourcePath string, config RsyncWrapper) (string, []string) {
 	command := "rsync"
-	commandArgs := []string{"-zaP"}
+	commandArgs := []string{"-zar"}
 	if config.RemoveDestinationFiles {
 		commandArgs = append(commandArgs, "--delete")
 	}
 
 	for _, v := range config.ExcludeDirs {
-		commandArgs = append(commandArgs, "--exclude", v)
+
+		commandArgs = append(commandArgs, fmt.Sprintf("--exclude=%s", strings.TrimSpace(v)))
 	}
 
+	if config.DryRun {
+		commandArgs = append(commandArgs, "--dry-run")
+	}
 	commandArgs = append(commandArgs, sourcePath)
-	dest := fmt.Sprintf("%s@%s", config.DestinationAddress, config.DestinationPath)
+	dest := fmt.Sprintf("%s:%s", config.DestinationAddress, config.DestinationPath)
 	commandArgs = append(commandArgs, dest)
 	return command, commandArgs
 }
