@@ -33,7 +33,7 @@ func Wrapper(ctx context.Context, path string) error {
 
 func generateCommand(sourcePath string, config RsyncWrapper) (string, []string) {
 	command := "rsync"
-	commandArgs := []string{"-zar"}
+	commandArgs := []string{"-zarP"}
 	if config.RemoveDestinationFiles {
 		commandArgs = append(commandArgs, "--delete")
 	}
