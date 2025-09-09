@@ -14,9 +14,26 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func Wrapper(ctx context.Context, path string) error {
+func Wrapper(ctx context.Context, path, homeDir string) error {
 	configFilePath := filepath.Join(path, WRAPPER_CONFIG)
-	configFileContent, err := os.ReadFile(configFilePath)
+	globalConfigFilePath := filepath.Join(homeDir, WRAPPER_CONFIG)
+
+	projectConfigFile, err := os.Stat(configFilePath)
+	if !os.IsNotExist(err) {
+		return err
+	}
+	_, err = os.Stat(globalConfigFilePath)
+	if !os.IsNotExist(err) {
+		return err
+	}
+
+	var configFileContent []byte
+	if projectConfigFile != nil {
+		configFileContent, err = os.ReadFile(configFilePath)
+	} else {
+		configFileContent, err = os.ReadFile(globalConfigFilePath)
+	}
+
 	if err != nil {
 		return err
 	}

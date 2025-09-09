@@ -16,9 +16,13 @@ func main() {
 		os.Exit(1)
 	}
 
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		logrus.Errorf("error getting user home directory: %v", err)
+	}
 	ctx := signals.SetupSignalContext()
 
-	err = rsync.Wrapper(ctx, path)
+	err = rsync.Wrapper(ctx, path, homeDir)
 	if err != nil {
 		logrus.Errorf("error from rsync wrapper: %v", err)
 		os.Exit(1)
