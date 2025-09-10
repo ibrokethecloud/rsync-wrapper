@@ -11,6 +11,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 )
 
@@ -19,18 +20,20 @@ func Wrapper(ctx context.Context, path, homeDir string) error {
 	globalConfigFilePath := filepath.Join(homeDir, WRAPPER_CONFIG)
 
 	projectConfigFile, err := os.Stat(configFilePath)
-	if !os.IsNotExist(err) {
+	if err != nil && !os.IsNotExist(err) {
 		return err
 	}
 	_, err = os.Stat(globalConfigFilePath)
-	if !os.IsNotExist(err) {
+	if err != nil && !os.IsNotExist(err) {
 		return err
 	}
 
 	var configFileContent []byte
 	if projectConfigFile != nil {
+		logrus.Debug("using project debug file")
 		configFileContent, err = os.ReadFile(configFilePath)
 	} else {
+		logrus.Debug("using global config file")
 		configFileContent, err = os.ReadFile(globalConfigFilePath)
 	}
 
@@ -38,6 +41,7 @@ func Wrapper(ctx context.Context, path, homeDir string) error {
 		return err
 	}
 
+	logrus.Debugf("config file contents \n%v\n", string(configFileContent))
 	configObj := &RsyncWrapper{}
 	if err := yaml.Unmarshal(configFileContent, configObj); err != nil {
 		return err

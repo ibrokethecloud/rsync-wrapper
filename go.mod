@@ -1,8 +1,9 @@
-module rsync-wrapper
+module github.com/ibrokethecloud/rsync-wrapper
 
 go 1.19
 
 require (
+	github.com/mitchellh/go-homedir v1.1.0
 	github.com/rancher/wrangler v1.1.1
 	github.com/sirupsen/logrus v1.9.3
 	gopkg.in/yaml.v2 v2.4.0
